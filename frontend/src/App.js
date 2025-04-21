@@ -56,13 +56,16 @@ function App() {
       dateGiven: item.dateGiven.split('T')[0],
       status: item.status,
     });
-  
+
     await fetch(`http://localhost:5000/items/${item._id}`, {
       method: 'DELETE'
     });
-  
+
     fetchItems();
   };
+
+  const lentItems = items.filter(item => item.type === 'Lent');
+  const borrowedItems = items.filter(item => item.type === 'Borrowed');
 
   return (
     <div>
@@ -119,10 +122,23 @@ function App() {
 
       <hr />
 
+      <h3>Lent Items</h3>
       <ul>
-        {items.map(item => (
+        {lentItems.map(item => (
           <li key={item._id}>
-            <strong>{item.name}</strong> ({item.type}) to/from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <strong>{item.name}</strong> to <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <button onClick={() => toggleStatus(item._id, item.status)}>Mark as {item.status === 'Pending' ? 'Returned' : 'Pending'}</button>
+            <button onClick={() => handleEdit(item)}>Edit</button>
+            <button onClick={() => handleDelete(item._id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+
+      <h3>Borrowed Items</h3>
+      <ul>
+        {borrowedItems.map(item => (
+          <li key={item._id}>
+            <strong>{item.name}</strong> from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
             <button onClick={() => toggleStatus(item._id, item.status)}>Mark as {item.status === 'Pending' ? 'Returned' : 'Pending'}</button>
             <button onClick={() => handleEdit(item)}>Edit</button>
             <button onClick={() => handleDelete(item._id)}>Delete</button>
