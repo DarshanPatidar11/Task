@@ -48,6 +48,22 @@ function App() {
     fetchItems();
   };
 
+  const handleEdit = async (item) => {
+    setForm({
+      name: item.name,
+      person: item.person,
+      type: item.type,
+      dateGiven: item.dateGiven.split('T')[0],
+      status: item.status,
+    });
+  
+    await fetch(`http://localhost:5000/items/${item._id}`, {
+      method: 'DELETE'
+    });
+  
+    fetchItems();
+  };
+
   return (
     <div>
       <h2>Track Items (Lent / Borrowed)</h2>
@@ -108,6 +124,7 @@ function App() {
           <li key={item._id}>
             <strong>{item.name}</strong> ({item.type}) to/from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
             <button onClick={() => toggleStatus(item._id, item.status)}>Mark as {item.status === 'Pending' ? 'Returned' : 'Pending'}</button>
+            <button onClick={() => handleEdit(item)}>Edit</button>
             <button onClick={() => handleDelete(item._id)}>Delete</button>
           </li>
         ))}

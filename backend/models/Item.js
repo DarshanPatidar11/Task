@@ -5,7 +5,6 @@ const itemSchema = new mongoose.Schema({
   person: String,
   type: { type: String, enum: ['Lent', 'Borrowed'] },
   dateGiven: Date,
-  expectedReturnDate: Date,
   status: { type: String, enum: ['Pending', 'Returned'], default: 'Pending' }
 });
 
