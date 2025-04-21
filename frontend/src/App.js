@@ -43,7 +43,7 @@ function App() {
     await fetch(`http://localhost:5000/items/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: newStatus }),
+      body: JSON.stringify({ status: newStatus , dateReturned: newStatus === 'Returned' ? new Date() : null }),
     });
     fetchItems();
   };
@@ -128,7 +128,7 @@ function App() {
       <ul>
         {lentItems.map(item => (
           <li key={item._id}>
-            <strong>{item.name}</strong> to <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <strong>{item.name}</strong> to <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()}<> </>
             <button onClick={() => toggleStatus(item._id, item.status)}>Mark as {item.status === 'Pending' ? 'Returned' : 'Pending'}</button>
             <button onClick={() => handleEdit(item)}>Edit</button>
             <button onClick={() => handleDelete(item._id)}>Delete</button>
@@ -140,7 +140,7 @@ function App() {
       <ul>
         {borrowedItems.map(item => (
           <li key={item._id}>
-            <strong>{item.name}</strong> from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <strong>{item.name}</strong> from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} <> </>
             <button onClick={() => toggleStatus(item._id, item.status)}>Mark as {item.status === 'Pending' ? 'Returned' : 'Pending'}</button>
             <button onClick={() => handleEdit(item)}>Edit</button>
             <button onClick={() => handleDelete(item._id)}>Delete</button>
@@ -152,9 +152,8 @@ function App() {
       <ul>
         {returnedItems.map(item => (
           <li key={item._id}>
-            <strong>{item.name}</strong> ({item.type}) from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <strong>{item.name}</strong> ({item.type}) {item.type === 'Lent' ? "to" : "from"} <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} and returned on {new Date(item.dateReturned).toLocaleDateString()}<> </>
             <button onClick={() => toggleStatus(item._id, item.status)}>Mark as Pending</button>
-            <button onClick={() => handleEdit(item)}>Edit</button>
             <button onClick={() => handleDelete(item._id)}>Delete</button>
           </li>
         ))}
