@@ -64,8 +64,10 @@ function App() {
     fetchItems();
   };
 
-  const lentItems = items.filter(item => item.type === 'Lent');
-  const borrowedItems = items.filter(item => item.type === 'Borrowed');
+  const lentItems = items.filter(item => item.type === 'Lent' && item.status === 'Pending');
+  const borrowedItems = items.filter(item => item.type === 'Borrowed' && item.status === 'Pending');
+  const returnedItems = items.filter(item => item.status === 'Returned');
+
 
   return (
     <div>
@@ -145,6 +147,19 @@ function App() {
           </li>
         ))}
       </ul>
+
+      <h3>Returned Items</h3>
+      <ul>
+        {returnedItems.map(item => (
+          <li key={item._id}>
+            <strong>{item.name}</strong> ({item.type}) from <strong>{item.person}</strong> on {new Date(item.dateGiven).toLocaleDateString()} — <em>{item.status}</em>
+            <button onClick={() => toggleStatus(item._id, item.status)}>Mark as Pending</button>
+            <button onClick={() => handleEdit(item)}>Edit</button>
+            <button onClick={() => handleDelete(item._id)}>Delete</button>
+          </li>
+        ))}
+      </ul>
+
     </div>
   );
 }
