@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 
 function App() {
+
+  const [currentlyEditingId, setCurrentlyEditingId] = useState(null);
+
   const [items, setItems] = useState([]);
   const [form, setForm] = useState({
     name: '',
@@ -22,12 +25,23 @@ function App() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await fetch('http://localhost:5000/items', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(form),
-    });
+    
+    if (currentlyEditingId) {
+      await fetch(`http://localhost:5000/items/${currentlyEditingId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+    } else {
+      await fetch('http://localhost:5000/items', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+    }
+
     setForm({ name: '', person: '', type: 'Lent', dateGiven: '', status: 'Pending' });
+    setCurrentlyEditingId(null);
     fetchItems();
   };
 
@@ -57,11 +71,7 @@ function App() {
       status: item.status,
     });
 
-    await fetch(`http://localhost:5000/items/${item._id}`, {
-      method: 'DELETE'
-    });
-
-    fetchItems();
+    setCurrentlyEditingId(item._id);
   };
 
   const lentItems = items.filter(item => item.type === 'Lent' && item.status === 'Pending');
